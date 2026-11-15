@@ -18,39 +18,37 @@ def display_name(name):
 
 
 def save_objective_figure(out_dir: Path):
-    """Render clean, uncluttered LaTeX/mathtext training objective card for Slide 4."""
+    """Render clean, notation-consistent LaTeX/mathtext training objective card for Slide 4."""
     bg = "#0F172A"
     rows = [
-        (r"$a^*$", r"$=\;\mathrm{argmax}_{a}\; Q_{\mathrm{online}}(o_{t+3},\, a)$", 0.715),
-        (r"$y$", r"$=\;R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)$", 0.525),
-        (r"$L$", r"$=\;\mathbb{E}\left[\,\mathrm{Huber}\left(y - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]$", 0.335),
+        (r"$a^*$", r"$=\;\arg\max_{a}\; Q_{\mathrm{online}}(o_{t+h},\, a)$", 0.76),
+        (r"$y$", r"$=\;R_t^{(h)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+h},\, a^*)$", 0.555),
+        (r"$L$", r"$=\;\mathbb{E}_{\mathrm{replay}}\left[\,\mathrm{Huber}\left(y - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]$", 0.39),
     ]
     with plt.rc_context({"mathtext.fontset": "dejavusans"}):
-        fig = plt.figure(figsize=(8.89, 2.44), facecolor=bg)
+        fig = plt.figure(figsize=(8.89, 2.38), facecolor=bg)
         ax = fig.add_axes([0, 0, 1, 1], facecolor=bg)
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.set_axis_off()
 
-        ax.text(0.045, 0.885, "TRAINING OBJECTIVE", color="#38BDF8",
-                fontsize=11, fontweight="bold", va="center", ha="left",
+        ax.text(0.045, 0.90, "TRAINING OBJECTIVE", color="#38BDF8",
+                fontsize=10.5, fontweight="bold", va="center", ha="left",
                 family="sans-serif")
 
         for lhs, rhs, y in rows:
-            ax.text(0.045, y, lhs, color="#FFFFFF", fontsize=19.0,
+            ax.text(0.045, y, lhs, color="#FFFFFF", fontsize=18.5,
                     va="center", ha="left")
-            ax.text(0.10, y, rhs, color="#FFFFFF", fontsize=19.0,
+            ax.text(0.098, y, rhs, color="#FFFFFF", fontsize=18.5,
                     va="center", ha="left")
 
-        ax.plot([0.045, 0.955], [0.20, 0.20], color="#334155", linewidth=1.0)
+        ax.plot([0.045, 0.955], [0.275, 0.275], color="#334155", linewidth=1.0)
 
-        footnote = (
-            r"$R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}"
-            r"\quad\cdot\quad "
-            r"\Gamma_t = \gamma^h m_t\quad"
-            r"(h \leq 3,\;\; m_t = 0\ \mathrm{at\ death},\; 1\ \mathrm{at\ 10k\ limit})$"
+        definition = (
+            r"$R_t^{(h)} = \sum_{k=0}^{h-1} \gamma^k r_{t+k+1},$"
+            r"$\qquad \Gamma_t = \gamma^h m_t$"
         )
-        ax.text(0.045, 0.10, footnote, color="#CBD5E1", fontsize=11.0,
+        ax.text(0.045, 0.14, definition, color="#E2E8F0", fontsize=13.5,
                 va="center", ha="left")
 
         fig.savefig(out_dir / "training_objective.png", dpi=300, facecolor=bg)

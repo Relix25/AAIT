@@ -34,20 +34,24 @@ Uniform replay buffer · target network · Huber loss · Adam
 **3-step return:** propagates sparse rewards to earlier actions.
 
 $$
-a^* = \mathrm{argmax}_a\; Q_{\mathrm{online}}(o_{t+3},\, a)
+a^* = \arg\max_a\; Q_{\mathrm{online}}(o_{t+h},\, a)
 $$
 $$
-y = R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)
+y = R_t^{(h)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+h},\, a^*)
 $$
 $$
-L = \mathbb{E}\left[\,\mathrm{Huber}\left(y - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]
+L = \mathbb{E}_{\mathrm{replay}}\!\left[\operatorname{Huber}\!\left(y - Q_{\mathrm{online}}(o_t,\, a_t)\right)\right]
 $$
 
-with $R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}$ and $\Gamma_t = \gamma^h m_t$ ($h \le 3$, $m_t = 0$ at death, $1$ at 10k limit).
+$$
+R_t^{(h)} = \sum_{k=0}^{h-1} \gamma^k r_{t+k+1}, \qquad \Gamma_t = \gamma^h m_t
+$$
+
+*Caption:* h is the actual return horizon, up to 3 steps. The bootstrap mask mₜ is 0 at death and 1 otherwise, including at the 10,000-step time limit.
 
 *Visual:* [training_objective.png](../figures/training_objective.png).
 
-*Say:* `Γ` includes the actual discount (`h = 3`, or `1`/`2` on the last two transitions of an episode via `NStepAccumulator`) and becomes zero at death (`m = 0`), while keeping `1` on the 10k time-limit truncation. We did not isolate either extension in an equal-budget ablation.
+*Say:* `h` is the actual horizon in `NStepAccumulator` (`h = 3`, or `1`/`2` on the last two transitions of an episode), so both `o_{t+h}`, `R_t^{(h)}` and `Γ_t` always stay consistent. `m_t = 0` cuts bootstrapping at death, while `m_t = 1` keeps bootstrapping on the 10,000-step time-limit truncation. We did not isolate either extension in an equal-budget ablation.
 
 ## Slide 5 — Experimental protocol
 
