@@ -1,0 +1,14 @@
+# Environnement virtuel et caches Python
+.venv/
+.interface/
+tmp/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Poids PyTorch et vidéos lourdes (non versionnés sur GitHub)
+*.pt
+*.mp4
+
+# Évaluations temporaires lancées depuis le dashboard
+runs/dashboard_eval_*/

@@ -1,0 +1,31 @@
+{
+  "episodes": 30,
+  "reward_mean": 4.499999999999998,
+  "reward_std": 1.7340405277052022,
+  "length_mean": 180.13333333333333,
+  "score": 4.029756030099169,
+  "success": {
+    "collect_coal": 0.0,
+    "collect_diamond": 0.0,
+    "collect_drink": 53.333333333333336,
+    "collect_iron": 0.0,
+    "collect_sapling": 83.33333333333334,
+    "collect_stone": 0.0,
+    "collect_wood": 80.0,
+    "defeat_skeleton": 0.0,
+    "defeat_zombie": 56.666666666666664,
+    "eat_cow": 23.333333333333332,
+    "eat_plant": 0.0,
+    "make_iron_pickaxe": 0.0,
+    "make_iron_sword": 0.0,
+    "make_stone_pickaxe": 0.0,
+    "make_stone_sword": 0.0,
+    "make_wood_pickaxe": 10.0,
+    "make_wood_sword": 0.0,
+    "place_furnace": 0.0,
+    "place_plant": 80.0,
+    "place_stone": 0.0,
+    "place_table": 63.33333333333333,
+    "wake_up": 90.0
+  }
+}
