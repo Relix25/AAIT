@@ -17,6 +17,56 @@ def display_name(name):
             "final_1m_g4": "Agent (2 seeds)"}.get(name, name)
 
 
+def save_objective_figure(out_dir: Path):
+    """Render clean LaTeX/mathtext training objective card for Slide 4."""
+    bg = "#0F172A"
+    equations = [
+        ("1. Action selection (Double DQN)",
+         r"$a^* = \arg\max_{a}\; Q_{\mathrm{online}}(o_{t+3},\, a)$", 0.69),
+        ("2. 3-step TD target",
+         r"$y_t = R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)$", 0.50),
+        ("3. Huber TD loss",
+         r"$\mathcal{L}(\theta) = \mathbb{E}_{\mathrm{replay}}\left[\,\mathrm{Huber}\left(y_t - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]$", 0.31),
+    ]
+    with plt.rc_context({"mathtext.fontset": "stixsans"}):
+        fig = plt.figure(figsize=(10, 2.75), facecolor=bg)
+        ax = fig.add_axes([0, 0, 1, 1], facecolor=bg)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_axis_off()
+
+        ax.text(0.035, 0.87, "TRAINING OBJECTIVE", color="#38BDF8",
+                fontsize=11, fontweight="bold", va="center", ha="left",
+                family="sans-serif")
+
+        for label, formula, y in equations:
+            ax.text(0.035, y, label, color="#94A3B8", fontsize=12.5,
+                    fontweight="bold", va="center", ha="left", family="sans-serif")
+            ax.text(0.38, y, formula, color="#FFFFFF", fontsize=15.5,
+                    va="center", ha="left")
+
+        ax.plot([0.035, 0.965], [0.20, 0.20], color="#334155", linewidth=1.0)
+
+        footnote_math = (
+            r"$R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}"
+            r"\qquad\cdot\qquad "
+            r"\Gamma_t = \gamma^h \cdot m_t$"
+        )
+        footnote_note = (
+            r"$h = 3$" " (or " r"$h = 1, 2$"
+            " for the last two transitions of an episode);   "
+            r"$m_t = 0$" " on terminal death, " r"$m_t = 1$"
+            " on 10k time-limit truncation"
+        )
+        ax.text(0.035, 0.125, footnote_math, color="#E2E8F0", fontsize=11.0,
+                va="center", ha="left", family="sans-serif")
+        ax.text(0.035, 0.05, footnote_note, color="#94A3B8", fontsize=10.0,
+                va="center", ha="left", family="sans-serif")
+
+        fig.savefig(out_dir / "training_objective.png", dpi=300, facecolor=bg)
+        plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", type=Path, nargs="*", default=[])
@@ -30,6 +80,7 @@ def main():
     parser.add_argument("--out", type=Path, default=Path("figures"))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
+    save_objective_figure(args.out)
     random_stats = summarize(read_episodes(args.random / "episodes.jsonl")) if args.random else None
 
     if args.train:

@@ -33,11 +33,21 @@ Uniform replay buffer · target network · Huber loss · Adam
 **Double DQN:** online network selects the next action; target network evaluates it.  
 **3-step return:** propagates sparse rewards to earlier actions.
 
-`a* = argmax_a Q_online(o', a)`  
-`y = R^(3) + Γ Q_target(o', a*)`  
-`L = E_replay[Huber(y − Q_online(o, a))]`
+$$
+a^* = \arg\max_{a}\; Q_{\mathrm{online}}(o_{t+3},\, a)
+$$
+$$
+y_t = R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)
+$$
+$$
+\mathcal{L}(\theta) = \mathbb{E}_{\mathrm{replay}}\left[\,\mathrm{Huber}\left(y_t - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]
+$$
 
-*Say:* `Γ` includes the actual discount and becomes zero at death. The footnote writes `Γ = γ³` for short; the code uses the real horizon, so the last one or two transitions of an episode carry `γ¹` or `γ²` (zero at death, kept at the 10k truncation). We did not isolate either extension in an equal-budget ablation.
+with $R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}$ and $\Gamma_t = \gamma^h \cdot m_t$ ($h = 3$, or $h = 1, 2$ for the last two transitions of an episode; $m_t = 0$ on terminal death, $m_t = 1$ on 10k time-limit truncation).
+
+*Visual:* [training_objective.png](../figures/training_objective.png).
+
+*Say:* `Γ` includes the actual discount (`h = 3`, or `1`/`2` on the last two transitions of an episode via `NStepAccumulator`) and becomes zero at death (`m = 0`), while keeping `1` on the 10k time-limit truncation. We did not isolate either extension in an equal-budget ablation.
 
 ## Slide 5 — Experimental protocol
 
