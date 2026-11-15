@@ -47,7 +47,7 @@ $$
 R_t^{(h)} = \sum_{k=0}^{h-1} \gamma^k r_{t+k+1}, \qquad \Gamma_t = \gamma^h m_t
 $$
 
-*Caption:* h is the actual return horizon, up to 3 steps. The bootstrap mask mₜ is 0 at death and 1 otherwise, including at the 10,000-step time limit.
+*Caption:* h ≤ 3: actual return horizon. mₜ = 0 at death, 1 otherwise.
 
 *Visual:* [training_objective.png](../figures/training_objective.png).
 
