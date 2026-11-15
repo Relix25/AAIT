@@ -34,16 +34,16 @@ Uniform replay buffer · target network · Huber loss · Adam
 **3-step return:** propagates sparse rewards to earlier actions.
 
 $$
-a^* = \arg\max_{a}\; Q_{\mathrm{online}}(o_{t+3},\, a)
+a^* = \mathrm{argmax}_a\; Q_{\mathrm{online}}(o_{t+3},\, a)
 $$
 $$
-y_t = R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)
+y = R_t^{(3)} + \Gamma_t\, Q_{\mathrm{target}}(o_{t+3},\, a^*)
 $$
 $$
-\mathcal{L}(\theta) = \mathbb{E}_{\mathrm{replay}}\left[\,\mathrm{Huber}\left(y_t - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]
+L = \mathbb{E}\left[\,\mathrm{Huber}\left(y - Q_{\mathrm{online}}(o_t,\, a_t)\right)\,\right]
 $$
 
-with $R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}$ and $\Gamma_t = \gamma^h \cdot m_t$ ($h = 3$, or $h = 1, 2$ for the last two transitions of an episode; $m_t = 0$ on terminal death, $m_t = 1$ on 10k time-limit truncation).
+with $R_t^{(3)} = r_{t+1} + \gamma\, r_{t+2} + \gamma^2\, r_{t+3}$ and $\Gamma_t = \gamma^h m_t$ ($h \le 3$, $m_t = 0$ at death, $1$ at 10k limit).
 
 *Visual:* [training_objective.png](../figures/training_objective.png).
 
